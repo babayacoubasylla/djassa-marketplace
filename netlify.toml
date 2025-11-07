@@ -1,0 +1,9 @@
+version: 2
+build_command: npm install && npm run build
+publish_directory: dist
+environment:
+  NODE_VERSION: 18
+redirects:
+  - from: /*
+    to: /index.html
+    status: 200
