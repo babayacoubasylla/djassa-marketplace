@@ -71,8 +71,20 @@ app.use('/uploads', express.static('uploads'));
 
 // Serve frontend static files (for production)
 if (process.env.NODE_ENV === 'production') {
-  // Serve static files from the React app build directory
-  app.use(express.static(path.join(__dirname, '../dist')));
+  // Configuration des types MIME pour les modules ES
+  const staticPath = path.join(__dirname, '../dist');
+  
+  app.use(express.static(staticPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+      } else if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      } else if (filePath.endsWith('.json')) {
+        res.setHeader('Content-Type', 'application/json');
+      }
+    }
+  }));
   
   // API routes first
   app.use('/api/auth', authRoutes);
@@ -119,8 +131,6 @@ if (process.env.NODE_ENV === 'production') {
   app.use('*', (req, res) => {
     res.status(404).json({ error: 'Route not found' });
   });
-}
-
 }
 
 // Global error handler

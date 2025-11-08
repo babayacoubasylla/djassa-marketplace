@@ -58,7 +58,29 @@ if (process.env.NODE_ENV === 'production') {
       res.send(basicHtml);
     });
   } else {
-    app.use(express.static(frontendPath));
+    // Configuration des types MIME pour les modules ES
+    express.static.mime.define({
+      'application/javascript': ['js'],
+      'text/css': ['css'],
+      'application/json': ['json'],
+      'image/png': ['png'],
+      'image/jpeg': ['jpg', 'jpeg'],
+      'image/gif': ['gif'],
+      'image/svg+xml': ['svg']
+    });
+    
+    app.use(express.static(frontendPath, {
+      setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        } else if (path.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+        } else if (path.endsWith('.json')) {
+          res.setHeader('Content-Type', 'application/json');
+        }
+      }
+    }));
+    
     app.get('*', (req, res) => {
       res.sendFile(path.join(frontendPath, 'index.html'));
     });
