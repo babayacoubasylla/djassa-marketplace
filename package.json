@@ -10,12 +10,13 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "cd backend && npm start",
-    "install-backend": "cd backend && npm ci --only=production",
+    "install-backend": "cd backend && npm install --production --no-optional",
     "build-frontend": "tsc -b && vite build",
     "postinstall": "npm run install-backend",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "npm run dev",
-    "serve": "npx serve dist"
+    "serve": "npx serve dist",
+    "render-build": "npm install --production && npm run install-backend && npm run build-frontend"
   },
   "dependencies": {
     "react": "^19.1.1",
