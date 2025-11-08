@@ -6,7 +6,8 @@
   "description": "Marketplace ivoirien Djassa - Application React TypeScript",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node build-simple.js",
+    "build-react": "npm install --include=dev && npx vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "cd backend && npm start",
