@@ -561,3 +561,97 @@
     </script>
 </body>
 </html>
+    <meta name="application-name" content="Djassa - Marketplace Côte d'Ivoire" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <title>Djassa - Marketplace Côte d'Ivoire</title>
+    
+    <!-- Meta description pour SEO -->
+    <meta name="description" content="Djassa - Plateforme complète de services en Côte d'Ivoire. Hôtels, restaurants, santé, livraison. Votre marketplace de confiance." />
+    <meta name="keywords" content="Djassa, marketplace, Côte d'Ivoire, hôtels, restaurants, santé, livraison, services, Abidjan" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://djassa-ci-b2a0a.web.app/" />
+    <meta property="og:title" content="Djassa - Marketplace Côte d'Ivoire" />
+    <meta property="og:description" content="Plateforme complète de services en Côte d'Ivoire - Hôtels, Santé, Restaurants, Livraison" />
+    <meta property="og:image" content="/assets/dj1-CadBw2Vt.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://djassa-ci-b2a0a.web.app/" />
+    <meta property="twitter:title" content="Djassa - Marketplace Côte d'Ivoire" />
+    <meta property="twitter:description" content="Plateforme complète de services en Côte d'Ivoire - Hôtels, Santé, Restaurants, Livraison" />
+    <meta property="twitter:image" content="/assets/dj1-CadBw2Vt.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+    
+    <!-- PWA Install Prompt -->
+    <script>
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Afficher le bouton d'installation personnalisé
+        const installButton = document.createElement('button');
+        installButton.innerHTML = '📱 Installer Djassa';
+        installButton.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: #FF6B35;
+          color: white;
+          border: none;
+          padding: 12px 20px;
+          border-radius: 25px;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+          z-index: 1000;
+          font-family: Inter, sans-serif;
+        `;
+        
+        installButton.addEventListener('click', () => {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              console.log('User accepted the install prompt');
+            }
+            deferredPrompt = null;
+            installButton.remove();
+          });
+        });
+        
+        document.body.appendChild(installButton);
+        
+        // Masquer le bouton après 10 secondes
+        setTimeout(() => {
+          if (installButton.parentNode) {
+            installButton.remove();
+          }
+        }, 10000);
+      });
+    </script>
+  </body>
+</html>
