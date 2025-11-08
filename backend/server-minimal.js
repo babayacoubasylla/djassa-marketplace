@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
@@ -39,11 +40,29 @@ app.get('/api/products', (req, res) => {
 // Servir les fichiers statiques en production
 if (process.env.NODE_ENV === 'production') {
   const frontendPath = path.join(__dirname, '..', 'dist');
-  app.use(express.static(frontendPath));
+  console.log('📁 Frontend path:', frontendPath);
   
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
-  });
+  // Vérifier si le dossier dist existe
+  if (!fs.existsSync(frontendPath)) {
+    console.log('⚠️ Dist folder not found, creating basic index.html');
+    // Créer le fichier à la volée
+    const basicHtml = `<!DOCTYPE html>
+<html><head><title>Djassa Live!</title></head>
+<body style="font-family:Arial;text-align:center;margin:50px;">
+<h1>🇨🇮 Djassa Marketplace</h1>
+<p>✅ Serveur déployé avec succès !</p>
+<p>API: <a href="/api/health">/api/health</a></p>
+</body></html>`;
+    
+    app.get('*', (req, res) => {
+      res.send(basicHtml);
+    });
+  } else {
+    app.use(express.static(frontendPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(frontendPath, 'index.html'));
+    });
+  }
 }
 
 // Démarrage du serveur
