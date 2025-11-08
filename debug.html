@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇨🇮 Djassa - Test Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            text-align: center;
+            min-height: 100vh;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 15px;
+        }
+        .test-button {
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .test-button:hover {
+            background: #218838;
+        }
+        .result {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🇨🇮 Djassa - Mode Debug</h1>
+        <p>Cette page teste les composants et APIs</p>
+        
+        <div id="tests">
+            <button class="test-button" onclick="testAPI()">Test API Health</button>
+            <button class="test-button" onclick="testProducts()">Test Products API</button>
+            <button class="test-button" onclick="testReact()">Test React Mount</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <!-- React Test -->
+    <div id="react-root"></div>
+
+    <script>
+        // Test API Health
+        async function testAPI() {
+            const results = document.getElementById('results');
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                results.innerHTML += `
+                    <div class="result">
+                        ✅ API Health: ${data.message}<br>
+                        Status: ${data.status}<br>
+                        Environment: ${data.environment}
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="result">❌ API Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        // Test Products API
+        async function testProducts() {
+            const results = document.getElementById('results');
+            try {
+                const response = await fetch('/api/products');
+                const data = await response.json();
+                results.innerHTML += `
+                    <div class="result">
+                        ✅ Products API: ${JSON.stringify(data, null, 2)}
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="result">❌ Products Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        // Test React Mount
+        function testReact() {
+            const results = document.getElementById('results');
+            const reactRoot = document.getElementById('react-root');
+            
+            try {
+                reactRoot.innerHTML = `
+                    <div style="background: rgba(255,255,255,0.2); padding: 20px; margin: 20px 0; border-radius: 10px;">
+                        <h3>🚀 React Component Test</h3>
+                        <p>Si vous voyez ceci, React peut s'exécuter !</p>
+                        <button onclick="alert('React fonctionne !')">Clic Test</button>
+                    </div>
+                `;
+                results.innerHTML += `
+                    <div class="result">✅ React Mount: SUCCESS</div>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="result">❌ React Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        // Auto-test au chargement
+        window.onload = function() {
+            testAPI();
+            testReact();
+        };
+    </script>
+</body>
+</html>

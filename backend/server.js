@@ -104,6 +104,10 @@ if (process.env.NODE_ENV === 'production') {
   }));
   
   // React app fallback LAST
+  app.get('/debug', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'debug.html'));
+  });
+  
   app.get('*', (req, res) => {
     res.sendFile(path.join(staticPath, 'index.html'));
   });
