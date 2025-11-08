@@ -10,7 +10,7 @@
     "build-simple": "node build-simple.js",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "cd backend && npm start",
+        "start": "node server-es.js",
     "install-backend": "cd backend && npm install",
     "postinstall": "npm run install-backend"
   },

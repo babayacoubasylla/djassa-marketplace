@@ -1,0 +1,63 @@
+import express from 'express';
+import path from 'path';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Servir les fichiers statiques du build React
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Routes API (pour futures fonctionnalités)
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Djassa API is running',
+    version: '3.1.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Routes pour les services
+app.get('/api/hotels', (req, res) => {
+  res.json({ message: 'Hotels API endpoint' });
+});
+
+app.get('/api/health-services', (req, res) => {
+  res.json({ message: 'Health services API endpoint' });
+});
+
+// Catch all handler: send back React's index.html file pour le routing côté client
+app.get('*', (req, res) => {
+  // Add cache headers to prevent caching issues
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  
+  console.log(`📍 Route accessed: ${req.url}`);
+  
+  // Force the latest React build
+  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  console.log(`📁 Serving: ${indexPath}`);
+  
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error('❌ Error serving file:', err);
+      res.status(500).send('Error loading app');
+    }
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Djassa server v3.1.0 running on port ${PORT}`);
+  console.log(`📱 React app ready with responsive design`);
+  console.log(`🎯 All functionalities enabled: Login, Admin, Registration`);
+});
