@@ -28,7 +28,23 @@ app.get('/api/health-services', (req, res) => {
 
 // Catch all handler: send back React's index.html file pour le routing côté client
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  // Add cache headers to prevent caching issues
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  
+  console.log(`📍 Route accessed: ${req.url}`);
+  
+  // Force the latest React build
+  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  console.log(`📁 Serving: ${indexPath}`);
+  
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error('❌ Error serving file:', err);
+      res.status(500).send('Error loading app');
+    }
+  });
 });
 
 app.listen(PORT, () => {
