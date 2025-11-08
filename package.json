@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "cd backend && npm start",
-    "install-backend": "cd backend && npm install",
+    "install-backend": "cd backend && npm ci --only=production",
     "build-frontend": "tsc -b && vite build",
     "postinstall": "npm run install-backend",
     "dev:backend": "cd backend && npm run dev",

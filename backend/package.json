@@ -23,12 +23,14 @@
     "cloudinary": "^1.41.0",
     "axios": "^1.6.2",
     "cheerio": "^1.0.0-rc.12",
-    "puppeteer": "^21.6.0",
     "node-cron": "^3.0.3",
     "socket.io": "^4.7.4",
     "nodemailer": "^6.9.7",
     "twilio": "^4.19.0",
     "stripe": "^14.9.0"
+  },
+  "optionalDependencies": {
+    "puppeteer": "^21.6.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
