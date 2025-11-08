@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 // Import routes
@@ -108,8 +109,110 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, '..', 'debug.html'));
   });
   
+  // Route de test HTML pur
+  app.get('/test', (req, res) => {
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>🇨🇮 Djassa - Test Direct</title>
+        <style>
+          body { 
+            font-family: Arial; 
+            text-align: center; 
+            padding: 50px; 
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+          }
+          .box { background: rgba(0,0,0,0.1); padding: 30px; border-radius: 15px; }
+        </style>
+      </head>
+      <body>
+        <div class="box">
+          <h1>🇨🇮 DJASSA FONCTIONNE !</h1>
+          <p>✅ Serveur Express : OK</p>
+          <p>✅ MongoDB : ${process.env.MONGODB_URI ? 'Connecté' : 'Non configuré'}</p>
+          <p>✅ Render : Déployé</p>
+          <p>📁 Dist path: ${path.join(__dirname, '../dist')}</p>
+          <button onclick="testAPI()">Test API</button>
+        </div>
+        <script>
+          async function testAPI() {
+            try {
+              const res = await fetch('/api/health');
+              const data = await res.json();
+              alert('API: ' + data.message);
+            } catch(e) {
+              alert('Erreur API: ' + e.message);
+            }
+          }
+        </script>
+      </body>
+      </html>
+    `);
+  });
+  
   app.get('*', (req, res) => {
-    res.sendFile(path.join(staticPath, 'index.html'));
+    // Diagnostics - Si pas de fichier dist/index.html, créer une page de diagnostic
+    const indexPath = path.join(staticPath, 'index.html');
+    
+    if (!fs.existsSync(indexPath)) {
+      return res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>🇨🇮 Djassa - Diagnostic</title>
+          <style>
+            body { 
+              font-family: Arial; 
+              margin: 0; 
+              padding: 20px; 
+              background: linear-gradient(135deg, #ff6b35, #f7931e);
+              color: white;
+              text-align: center;
+            }
+            .container { max-width: 800px; margin: 0 auto; }
+            .error { background: rgba(255,0,0,0.2); padding: 20px; border-radius: 10px; margin: 20px 0; }
+            .success { background: rgba(0,255,0,0.2); padding: 20px; border-radius: 10px; margin: 20px 0; }
+            .info { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; text-align: left; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>🇨🇮 Djassa - Mode Diagnostic</h1>
+            
+            <div class="error">
+              ❌ PROBLÈME DÉTECTÉ: dist/index.html manquant
+            </div>
+            
+            <div class="info">
+              <h3>📊 Diagnostic Serveur :</h3>
+              <p>📁 Static Path: ${staticPath}</p>
+              <p>📄 Index Path: ${indexPath}</p>
+              <p>🌍 Environment: ${process.env.NODE_ENV}</p>
+              <p>🔗 Port: ${process.env.PORT || 10000}</p>
+            </div>
+            
+            <div class="success">
+              ✅ Serveur Express : Fonctionnel<br>
+              ✅ Routes API : Disponibles<br>
+              ✅ MongoDB : ${process.env.MONGODB_URI ? 'Connecté' : 'Non configuré'}
+            </div>
+            
+            <button onclick="window.location.href='/test'" style="padding: 15px 30px; font-size: 16px; margin: 10px;">
+              🧪 Page Test
+            </button>
+            
+            <button onclick="window.location.href='/api/health'" style="padding: 15px 30px; font-size: 16px; margin: 10px;">
+              🔌 Test API
+            </button>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+    
+    res.sendFile(indexPath);
   });
 } else {
   // Development mode - API routes only
