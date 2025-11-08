@@ -71,22 +71,7 @@ app.use('/uploads', express.static('uploads'));
 
 // Serve frontend static files (for production)
 if (process.env.NODE_ENV === 'production') {
-  // Configuration des types MIME pour les modules ES
-  const staticPath = path.join(__dirname, '../dist');
-  
-  app.use(express.static(staticPath, {
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript');
-      } else if (filePath.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-      } else if (filePath.endsWith('.json')) {
-        res.setHeader('Content-Type', 'application/json');
-      }
-    }
-  }));
-  
-  // API routes first
+  // API routes FIRST
   app.use('/api/auth', authRoutes);
   app.use('/api/products', productRoutes);
   app.use('/api/orders', orderRoutes);
@@ -104,9 +89,23 @@ if (process.env.NODE_ENV === 'production') {
     });
   });
   
-  // Serve React app for all non-API routes
+  // Static files AFTER API routes
+  const staticPath = path.join(__dirname, '../dist');
+  app.use(express.static(staticPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+      } else if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      } else if (filePath.endsWith('.json')) {
+        res.setHeader('Content-Type', 'application/json');
+      }
+    }
+  }));
+  
+  // React app fallback LAST
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
+    res.sendFile(path.join(staticPath, 'index.html'));
   });
 } else {
   // Development mode - API routes only
